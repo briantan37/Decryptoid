@@ -11,13 +11,15 @@
     //Create a session
     session_start();
     if($_SESSION != NULL) {
-        buildHTML("login" , null);
+        buildHTML("slogin" , "Welcome back, " . $_SESSION['fn'] . " " . $_SESSION['ln']);
         return;
     }
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // pressed login button
         if (isset($_POST['login'])) {
-            // pressed login button
-            if(isset($_POST['un']) && isset($_POST['pw']) && $_POST['un'] !== "") {
+            //Create an array to validate if the user entered all the field
+            $requiredLogin = array('un', 'pw');
+            if(isset($_POST['un'], $_POST['pw']) && !checkEmpty($requiredLogin, $_POST)) {
                 //Both the input fields are not empty
                 $un_temp = mysql_entities_fix_string($connection, $_POST['un']);
                 $pw_temp = mysql_entities_fix_string($connection, $_POST['pw']);
@@ -50,33 +52,31 @@
                         $_SESSION['email'] = $row[0];
                         $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
                         $_SESSION['check'] = hash('ripemd128', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
+                        //Display successful login message and redirect to index.php
                         buildHTML("slogin", "Hi $row[3] $row[4], you are now logged in as $row[0]");
-                        //Display web content to the client
-                        //htmlBuilder(0, $row);
                     }
                     else {
                         // Password is incorrect
                         buildHTML("elogin", "Incorrect username/password");
-                        //htmlBuilder(1, null);
                         return;
                     }
                 }
                 else {
                     //There is no user name associated in the db
                     buildHTML("elogin", "Incorrect username/password");
-                    //htmlBuilder(1, null);
                     return;
                 }
             }
             else {
                 //One or both of the input fields are empty
                 buildHTML("elogin", "Must enter both fields!");
-                //htmlBuilder(1, null);
             }
         }
+        // pressed create account button
         else if(isset($_POST['create'])) {
-            // pressed create button
-            if(isset($_POST['un']) && isset($_POST['pw']) && isset($_POST['email']) && isset($_POST['fn']) && isset($_POST['ln']) && $_POST['un'] !== "") {
+            //Create an array to validate if the user entered all fields
+            $requiredCreate = array('un', 'pw', 'fn', 'ln', 'email');
+            if(isset($_POST['un'], $_POST['pw'], $_POST['email'], $_POST['fn'], $_POST['ln']) && !checkEmpty($requiredCreate, $_POST)) {
                 //sanitize inputs
                 $un_temp = mysql_entities_fix_string($connection, $_POST['un']);
                 $email_temp = mysql_entities_fix_string($connection, $_POST['email']);
@@ -100,8 +100,8 @@
                     $query = "INSERT INTO credentials VALUES('$email_temp', '$un_temp', '$pw_hashed', '$fn_temp', '$ln_temp', '$salt1_temp', '$salt2_temp')";
                     $result = $connection->query($query);
                     if(!$result) die($connection->error);
+                    //Display succesful account creation message to client
                     buildHTML("screate", "Successfully Created An Account, Please Login");
-                    //htmlBuilder(1, null);
                 }
                 else {
                     //There is already a record in the database
@@ -113,9 +113,9 @@
             else {
                 //One or both fields are empty
                 buildHTML("ecreate", "Must enter all fields");
-                //htmlBuilder(2, null);
             }
         }
+        //pressed the back to login button
         else if (isset($_POST['loginView'])) {
             buildHTML("login", null);
         }

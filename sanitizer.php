@@ -12,4 +12,12 @@
         $var = htmlentities($var);
         return $var;
     }
+    function checkEmpty($arr, $post) {
+        foreach($arr as $index) {
+            if(empty($post[$index])) {
+                return true;
+            }
+        }
+        return false;
+    }
 ?>
