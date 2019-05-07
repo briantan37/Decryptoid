@@ -6,21 +6,76 @@
     </head>
     <body>
         <div class="container">
-            <h2>Hello, Brian Tan</h2>
-            <div class="d-flex justify-content-center p-2 flex-row bd-highlight border border-primary">
-                <div class="p2 flex-fill bd-highlight border border-danger">Flexbox 1.1
-                    <form>
-
-                        <div class="form-group">
-                            <label for="exampleFormControlFile1">Example file input</label>
-                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            <h1 class="text-center display-4">Hello, Brian Tan</h1>
+            <form>
+                <fieldset class="form-group">
+                    <div class="row">
+                        <legend class="col-form-label col-sm-2 pt-0">Encryption Type</legend>
+                        <div class="col-sm-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    Simple Substitution
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Double Transposition
+                                </label>
+                            </div>
+                            <div class="form-check disabled">
+                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3">
+                                <label class="form-check-label" for="gridRadios3">
+                                    RC4
+                                </label>
+                            </div>
                         </div>
-                    </form>
+                        <div class="col">
+                            <div class="form-group row">
+                                <label for="keyInput1" class="col-sm-2 col-form-label">Key 1:</label>
+                                <div class="col">
+                                    <input type="text" class="form-control" id="keyInput1" placeholder="Ex. UEOQDGYSXCFPHWVJRTNIAMBZKL">
+                                </div>
+                            </div>
+                            <div class="form-group row" id="key2" hidden>
+                                <label for="keyInput1" class="col-sm-2 col-form-label">Key 2:</label>
+                                <div class="col">
+                                    <input type="text" class="form-control" id="keyInput2" placeholder="Ex. 2,4,7,0,1,6,3,5">
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <button type="button" class="btn btn-secondary btn-sm">Generate Key</button>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="row px-3">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="validatedCustomFile">
+                        <label class="custom-file-label" for="validatedCustomFile">Choose .txt file...</label>
+                        <div class="invalid-feedback">Must be .txt file!</div>
+                    </div>
                 </div>
-                <div class="p2 flex-fill bd-highlight border border-danger">Flexbox 1.2
-    
+                <div class="row">
+                    <div class="col-6 form-group">
+                        <label for="inputText">Input:</label>
+                        <textarea class="form-control" id="inputText" placeholder="Enter Text Here" rows="3"></textarea>
+                    </div>
+                    <div class="col-6 form-group">
+                        <label for="outputText">Output:</label>
+                        <textarea class="form-control" id="outputText" disabled="true" rows="3"></textarea>
+                    </div>
                 </div>
-            </div>
+                <div class="row justify-content-center mb-2">
+                    <div class="col-6">
+                        <input class="btn btn-primary btn-lg btn-block" type="submit" value="Encrypt">
+                    </div>
+                    <div class="col-6">
+                        <input class="btn btn-secondary btn-lg btn-block" type="submit" value="Decrypt">
+                    </div>
+                </div>
+            </form>
             <table class="table table-striped">
                     <thead class="thead-dark">
                         <tr>
@@ -43,5 +98,6 @@
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    </body>  
+        <script src="./utlities.js"></script>
+    </body>
 </html>

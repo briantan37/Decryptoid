@@ -1,22 +1,23 @@
 <?php
-    // $tmp = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    // echo str_shuffle($tmp)."<br>";
-    interface Strategy {
-        public function encrypt($input, $key);
-        public function decrypt($input, $key);
-    }
-    class Cipher
-    {
-        function __construct($strategy, $key, $input) {
-            $this->key = $key;
-            $this->strategy = $strategy;
-            $this->input = $input;
-        }
+    define("RESET_ASCII_VALUE", 65);
 
-    }
+//    interface Strategy {
+//        public function encrypt($input, $key);
+//        public function decrypt($input, $key);
+//    }
+//    class Cipher
+//    {
+//        function __construct($strategy, $key, $input) {
+//            $this->key = $key;
+//            $this->strategy = $strategy;
+//            $this->input = $input;
+//        }
+//
+//    }
 
     class Substitution
     {
+
         function encrypt($input, $key) {
             $output = "";
             $keyArr = str_split($key);
@@ -56,12 +57,13 @@
         {
 
             $arr = $this->parseTo2DArray($input);
-            $this->swap($key, $arr, count($arr));
+            return $this->swap($key, $arr, count($arr), false);
         }
 
         public function decrypt($input, $key)
         {
-
+            $arr = $this->parseTo2DArray($input);
+            return $this->swap($key, $arr, count($arr), true);
         }
 
         private function parseTo2DArray($input) {
@@ -97,42 +99,105 @@
             return $arr;
         }
 
-        private function swap($key, $arr, $len) {
+        private function swap($key, $arr, $len, $reverse) {
             $key1 = explode(",", $key[0]);      //key to switch the rows
             $key2 = explode(",", $key[1]);      //key to switch the column;
             $output = array();
-            $swapFlag = (count($key1) < $len) ? true : false;
+
             //Start switching the rows
-            for($i = 0; $i < $len; $i++) {
-                //make sure that the value of i does not exceed the length of key1
-                if($i < count($key1)) {
-                    $keyIndex = (int) $key1[$i];
-                    if($swapFlag) {                       //if the key's index is less than the len of the array
-                        $output[$keyIndex] = $arr[$i];       //Replace the key index to the array's index
-                    }
-                    else {
-                        $output[$i] = $arr[$keyIndex];        //store the array of the key's index at the current index
-                    }
+            if(count($key1) == $len && count($key2) == $len){
+                for($i = 0; $i < $len; $i++) {
+                    $leftVar = $reverse ? (int) $key1[$i] : $i;
+                    $rightVar = $reverse ? $i : (int) $key1[$i];
+                    $output[$leftVar] = $arr[$rightVar];
                 }
-
-            }
-            $swapFlag = (count($key2) < $len) ? true : false;
-            for($j = 0; $j < $len; $j++) {
-                if($j < count($key2)) {
-                    $keyIndex = (int) $key2[$i];
-                    if($swapFlag) {
-
+                $arr = $output;
+                for($i = 0; $i < $len; $i++) {
+                    for($j = 0; $j < $len; $j++) {
+                        $leftVar = $reverse ? (int) $key2[$i] : $i;
+                        $rightVar = $reverse ? $i : (int) $key2[$i];
+                        $output[$j][$leftVar] = $arr[$j][($rightVar)];
                     }
                 }
             }
+            $tmpArr = array();
+            for($i = 0; $i< $len; $i++) {
+                $tmpArr[] = implode($output[$i]);
+            }
+
+            return implode($tmpArr);
         }
     }
 
-    $dtrans = new DTransposition;
-    //            c,e,f,a,b,
-    $key = array("2,4,5,0","2,4,5,3");
-    $input = "aaaaaabbbbbbccccccddddddeeeeeeffffff";
-    $dtrans->encrypt($input, $key);
+    class RC4 {
+        public function encrypt($input, $key)
+        {
+            /**Initialization of RC4 **/
+            $keyByteArr = $this->changeToBytes($key);
+            $S = array();       //Array that holds the state of RC4; the permutation of 0-255
+            $K = array();       //Array that holds the key
+            for($i = 0; $i <= 255; $i++) {
+                $S[$i] = $i;
+                $K[$i] = $keyByteArr[$i % count($keyByteArr)];
+            }
+            $j = 0;
+            for($i = 0; $i <= 255; $i++) {
+                $j = ($j + $S[$i] + $K[$i]) % 256;
+
+                $tmp = $S[$i];
+                $S[$i] = $S[$j];
+                $S[$j] = $tmp;
+            }
+            $i = 0;
+            $j = 0;
+            $output = "";
+            $inputByteArr = $this->changeToBytes($input);
+
+            /**Keystream**/
+            for($x = 0; $x < count($inputByteArr); $x++) {
+                $i = ($i + 1) % 256;
+                $j = ($j + $S[$i]) % 256;
+
+                $tmp = $S[$i];
+                $S[$i] = $S[$j];
+                $S[$j] = $tmp;
+
+                $t = ($S[$i] + $S[$j]) % 256;
+                $keyStreamByte = $S[$t];
+                $output .= chr($keyStreamByte ^ $inputByteArr[$x]);
+            }
+            return $output;
+        }
+
+        public function decrypt($input, $key)
+        {
+            return $this->encrypt($input, $key);
+        }
+
+        private function changeToBytes($input)
+        {
+            $arr = array();
+            $byte = unpack('C*', $input, 0);
+            foreach($byte as $element) {
+                $arr[] = $element;
+            }
+            return $arr;
+        }
+    }
+
+//    $rc4 = new RC4;
+//    $tmp = $rc4->encrypt("Hi my name is Brian Tan!", "d2x040Ws3K");
+//    echo $tmp;
+//    echo $rc4->decrypt($tmp, "d2x040Ws3K");
+//    $dtrans = new DTransposition;
+//    //            c,e,f,a,b,d
+//    $key = array("2,4,5,0,1,3","2,4,5,3,0,1");
+//    //$input = "aaaaaabbbbbbccccccddddddeeeeeeffffff";
+//    $input = "briantan37@gmail.com brian tan 12345";
+//    $var = $dtrans->encrypt($input, $key);
+//    echo $var;
+//    echo "<br>";
+//    echo $dtrans->decrypt($var, $key);
     // define("RESET_ASCII_VALUE", 65);
     // $sub = new Substitution;
     // echo $sub->decrypt("USXHKWUHDXNETXUW", "UEOQDGYSXCFPHWVJRTNIAMBZKL");
