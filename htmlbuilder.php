@@ -1,7 +1,7 @@
 <?php
     function buildHTML($type, $message) {
-        $metaTag = ($type !== "slogin" ? "" : '<meta http-equiv="refresh" content="3;url=index.php"/>');
-        $styleTag = ($type !== "slogin" ? '<style>body {background-image: url("https://i.pinimg.com/originals/77/9e/9a/779e9af714eca52f9daa64fbda14480b.jpg");background-size: cover;background-repeat: no-repeat;}</style>' : "");
+        $metaTag = ($type !== "slogin" ? "" : '<meta http-equiv="refresh" content="3;url=decryptoid.php"/>');
+        $styleTag = ($type !== "slogin" ? '<style>body {background-image: url("http://mbem.fr/wp-content/uploads/2018/06/videoblocks-abstract-motion-background-digital-plexus-data-networks-alpha-matte-loop_s-zvyghew_thumbnail-full01-1.png");background-size: cover;background-repeat: no-repeat;} html {height:100%}</style>' : "");
         echo <<<_HEAD
             <!DOCTYPE HTML>
             <html>
@@ -30,8 +30,8 @@ _FOOT;
             case "login":
                 echo <<<_LOGIN
                     <div class="container">
-                        <h1 class="display-3 text-center text-white">Decryptoid</h1>
                         <div class="w-50 mx-auto">
+                        <h1 class="display-3 text-center text-white">Decryptoid</h1>
                             <form method='post' action='login.php' enctype='multipart/form-data'>
                                 <div class="form-group">
                                     <label class="text-white" for="username1">Username</label>
@@ -59,7 +59,7 @@ _ERRORLOGIN;
             case "slogin":
                 echo <<<_SUCCESSLOGIN
                 <h5 class="display-5 text-center">{$message}</h5>
-                <h6 class="display-6 text-center">Redirecting in 3 seconds... or <span><a href=index.php>Click here to continue</a></span></h6>
+                <h6 class="display-6 text-center">Redirecting in 3 seconds... or <span><a href=decryptoid.php>Click here to continue</a></span></h6>
 _SUCCESSLOGIN;
                 break;
             case "create":
